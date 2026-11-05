@@ -1,0 +1,32 @@
+# Archivos de entorno y credenciales
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencias y archivos generados
+**/vendor/
+**/node_modules/
+**/public/build/
+**/storage/*.key
+
+# Archivos del sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Archivos comprimidos y respaldos
+*.rar
+*.zip
+*.bak
+
+# Archivos que no deben publicarse
+/BD ReservasCanchas.sql
+/ReservasCanchasLaravel-soapui-project.xml
+
+# Instrucciones internas de herramientas
+/ReservasCanchasLaravel/AGENTS.md
+/ReservasCanchasLaravel/CLAUDE.md

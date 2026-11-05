@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="369e7799-2d6e-4213-b08f-2604e4d700c9" activeEnvironment="Default" name="ReservasCanchasLaravel" soapui-version="5.10.0" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="d077218f-8a20-44f9-a503-aa29c2c63e7a" wsaVersion="NONE" name="ReservasCanchasBinding" type="wsdl" bindingName="{urn:ReservasCanchas}ReservasCanchasBinding" soapVersion="1_1" anonymous="optional" definition="http://127.0.0.1:8000/soap?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://127.0.0.1:8000/soap?wsdl"><con:part><con:url>http://127.0.0.1:8000/soap?wsdl</con:url><con:content><![CDATA[<definitions targetNamespace="urn:ReservasCanchas" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:ReservasCanchas" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema targetNamespace="urn:ReservasCanchas">
+      <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+      <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+    </xsd:schema>
+  </types>
+  <message name="registrarCancha">
+    <part name="codigo" type="xsd:string"/>
+    <part name="nombre" type="xsd:string"/>
+    <part name="tipo" type="xsd:string"/>
+    <part name="estado" type="xsd:string"/>
+  </message>
+  <message name="registrarCanchaResponse">
+    <part name="return" type="xsd:string"/>
+  </message>
+  <message name="consultarCancha">
+    <part name="id" type="xsd:int"/>
+  </message>
+  <message name="consultarCanchaResponse">
+    <part name="return" type="xsd:string"/>
+  </message>
+  <message name="listarCanchas"/>
+  <message name="listarCanchasResponse">
+    <part name="return" type="xsd:string"/>
+  </message>
+  <message name="actualizarCancha">
+    <part name="id" type="xsd:int"/>
+    <part name="nombre" type="xsd:string"/>
+    <part name="tipo" type="xsd:string"/>
+    <part name="estado" type="xsd:string"/>
+  </message>
+  <message name="actualizarCanchaResponse">
+    <part name="return" type="xsd:string"/>
+  </message>
+  <message name="registrarReserva">
+    <part name="canchaId" type="xsd:int"/>
+    <part name="usuarioId" type="xsd:int"/>
+    <part name="fecha" type="xsd:string"/>
+    <part name="hora" type="xsd:string"/>
+    <part name="estado" type="xsd:string"/>
+  </message>
+  <message name="registrarReservaResponse">
+    <part name="return" type="xsd:string"/>
+  </message>
+  <message name="consultarReservas"/>
+  <message name="consultarReservasResponse">
+    <part name="return" type="xsd:string"/>
+  </message>
+  <portType name="ReservasCanchasPortType">
+    <operation name="registrarCancha">
+      <documentation>Registra una nueva cancha deportiva.</documentation>
+      <input message="tns:registrarCancha"/>
+      <output message="tns:registrarCanchaResponse"/>
+    </operation>
+    <operation name="consultarCancha">
+      <documentation>Consulta una cancha por su identificador.</documentation>
+      <input message="tns:consultarCancha"/>
+      <output message="tns:consultarCanchaResponse"/>
+    </operation>
+    <operation name="listarCanchas">
+      <documentation>Lista todas las canchas registradas.</documentation>
+      <input message="tns:listarCanchas"/>
+      <output message="tns:listarCanchasResponse"/>
+    </operation>
+    <operation name="actualizarCancha">
+      <documentation>Actualiza los datos de una cancha.</documentation>
+      <input message="tns:actualizarCancha"/>
+      <output message="tns:actualizarCanchaResponse"/>
+    </operation>
+    <operation name="registrarReserva">
+      <documentation>Registra una reserva de cancha.</documentation>
+      <input message="tns:registrarReserva"/>
+      <output message="tns:registrarReservaResponse"/>
+    </operation>
+    <operation name="consultarReservas">
+      <documentation>Consulta todas las reservas registradas.</documentation>
+      <input message="tns:consultarReservas"/>
+      <output message="tns:consultarReservasResponse"/>
+    </operation>
+  </portType>
+  <binding name="ReservasCanchasBinding" type="tns:ReservasCanchasPortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="registrarCancha">
+      <soap:operation soapAction="urn:ReservasCanchas#registrarCancha" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="consultarCancha">
+      <soap:operation soapAction="urn:ReservasCanchas#consultarCancha" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="listarCanchas">
+      <soap:operation soapAction="urn:ReservasCanchas#listarCanchas" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="actualizarCancha">
+      <soap:operation soapAction="urn:ReservasCanchas#actualizarCancha" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="registrarReserva">
+      <soap:operation soapAction="urn:ReservasCanchas#registrarReserva" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="consultarReservas">
+      <soap:operation soapAction="urn:ReservasCanchas#consultarReservas" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="ReservasCanchas">
+    <port name="ReservasCanchasPort" binding="tns:ReservasCanchasBinding">
+      <soap:address location="http://127.0.0.1:8000/index.php"/>
+    </port>
+  </service>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://127.0.0.1:8000/index.php</con:endpoint></con:endpoints><con:operation id="d84f7fe1-758d-421c-8a23-98e56fbe07b1" isOneWay="false" action="urn:ReservasCanchas#actualizarCancha" name="actualizarCancha" bindingOperationName="actualizarCancha" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="6bf502cf-83be-4d4f-8aa0-bac4f5504373" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://127.0.0.1:8000/soap</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <urn:actualizarCancha soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">\r
+         <id xsi:type="xsd:int">?</id>\r
+         <nombre xsi:type="xsd:string">?</nombre>\r
+         <tipo xsi:type="xsd:string">?</tipo>\r
+         <estado xsi:type="xsd:string">?</estado>\r
+      </urn:actualizarCancha>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#actualizarCancha"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="06067f8b-9130-4d5d-9652-0ef7a55d0130" isOneWay="false" action="urn:ReservasCanchas#consultarCancha" name="consultarCancha" bindingOperationName="consultarCancha" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2a3d5509-7e4d-450c-9a08-f21bfbc1b9c6" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://127.0.0.1:8000/soap</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Header><wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken wsu:Id="UsernameToken-C4AEF9E9231C2B942917908127221853"><wsse:Username>USUARIO_LOCAL</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">[CONFIGURAR_LOCALMENTE]</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header>
+   <soapenv:Body>
+      <urn:consultarCancha soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <id xsi:type="xsd:int">1</id>
+      </urn:consultarCancha>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#consultarCancha"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="64005663-ee05-4330-b262-76989cf86a46" isOneWay="false" action="urn:ReservasCanchas#consultarReservas" name="consultarReservas" bindingOperationName="consultarReservas" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="64b2ff4b-3528-47f2-8fa9-eafce0678345" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://127.0.0.1:8000/soap</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Header><wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken wsu:Id="UsernameToken-C4AEF9E9231C2B942917908128615314"><wsse:Username>usuarioIncorrecto</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">[CONFIGURAR_LOCALMENTE]</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header>
+   <soapenv:Body>
+      <urn:consultarReservas soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#consultarReservas"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="633afa9f-8334-4061-8b41-f9bb26d12687" isOneWay="false" action="urn:ReservasCanchas#listarCanchas" name="listarCanchas" bindingOperationName="listarCanchas" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b5ab0174-b825-4ec6-94b5-a1f62caca3f5" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://127.0.0.1:8000/soap</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Header><wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:UsernameToken wsu:Id="UsernameToken-C4AEF9E9231C2B942917908129877195"><wsse:Username>usuarioIncorrecto</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">[CONFIGURAR_LOCALMENTE]</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header>
+   <soapenv:Body>
+      <urn:listarCanchas soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#listarCanchas"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="41608fd7-0780-424a-9878-9d5d14da9543" isOneWay="false" action="urn:ReservasCanchas#registrarCancha" name="registrarCancha" bindingOperationName="registrarCancha" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5b657b15-b370-4249-b564-4f86a3a254ef" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://127.0.0.1:8000/soap</con:endpoint><con:request><![CDATA[usuarioIncorrecto<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <urn:registrarCancha soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">\r
+         <codigo xsi:type="xsd:string">1</codigo>\r
+         <nombre xsi:type="xsd:string">?</nombre>\r
+         <tipo xsi:type="xsd:string">?</tipo>\r
+         <estado xsi:type="xsd:string">?</estado>\r
+      </urn:registrarCancha>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#registrarCancha"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="d6e18861-0b45-447b-ab8f-70ac72a95bca" isOneWay="false" action="urn:ReservasCanchas#registrarReserva" name="registrarReserva" bindingOperationName="registrarReserva" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5537ae1e-3a75-43ba-89c7-f596bc04f418" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://127.0.0.1:8000/soap</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <urn:registrarReserva soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">\r
+         <canchaId xsi:type="xsd:int">?</canchaId>\r
+         <usuarioId xsi:type="xsd:int">?</usuarioId>\r
+         <fecha xsi:type="xsd:string">?</fecha>\r
+         <hora xsi:type="xsd:string">?</hora>\r
+         <estado xsi:type="xsd:string">?</estado>\r
+      </urn:registrarReserva>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#registrarReserva"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer><con:outgoing><con:name>ReservasCanchasSecurity</con:name><con:username/><con:entry type="Username" username="usuarioIncorrecto" password=""><con:configuration><addCreated>false</addCreated><addNonce>false</addNonce><passwordType>PasswordText</passwordType></con:configuration></con:entry></con:outgoing></con:wssContainer><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
