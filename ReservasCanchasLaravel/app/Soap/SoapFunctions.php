@@ -1,234 +1,164 @@
 <?php
 
 use App\Services\CanchaService;
+use App\Services\JwtService;
 use App\Services\ReservaService;
+use App\Services\SoapReservationAuthorizationService;
 
-if (!function_exists('respuestaSoap')) {
+if (! function_exists('respuestaSoap')) {
+    /** @param array<string, mixed> $datos */
     function respuestaSoap(array $datos): string
     {
-        return json_encode(
-            $datos,
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-        );
+        return json_encode($datos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '{}';
     }
 }
 
+if (! function_exists('validarTokenSoap')) {
+    /** @return array<string, mixed>|false */
+    function validarTokenSoap(string $token): array|false
+    {
+        try {
+            $claims = app(JwtService::class)->validate($token);
 
-/*
-|--------------------------------------------------------------------------
-| OPERACIÓN 1: registrarCancha
-|--------------------------------------------------------------------------
-*/
+            if (array_key_exists('token_use', $claims)
+                || array_key_exists('scope', $claims)
+                || array_key_exists('aud', $claims)) {
+                return false;
+            }
 
-if (!function_exists('registrarCancha')) {
-    function registrarCancha(
-        string $codigo,
-        string $nombre,
-        string $tipo,
-        string $estado
-    ): string {
+            return $claims;
+        } catch (Throwable) {
+            return false;
+        }
+    }
+}
+
+if (! function_exists('ValidateTokenService')) {
+    function ValidateTokenService(string $token): string
+    {
+        $claims = validarTokenSoap($token);
+        if ($claims === false) {
+            return respuestaSoap(['exito' => false, 'mensaje' => 'Token JWT inválido, vencido o revocado.']);
+        }
+
+        return respuestaSoap([
+            'exito' => true,
+            'mensaje' => 'Token JWT válido. La firma HS256 fue verificada.',
+            'usuario_id' => (int) $claims['sub'],
+            'expira' => (int) $claims['exp'],
+        ]);
+    }
+}
+
+if (! function_exists('registrarCancha')) {
+    function registrarCancha(string $token, string $codigo, string $nombre, string $tipo, string $estado): string
+    {
+        if (validarTokenSoap($token) === false) {
+            return respuestaSoap(['exito' => false, 'mensaje' => 'JWT inválido, vencido o revocado. Operación no autorizada.']);
+        }
 
         try {
-
-            $service = app(CanchaService::class);
-
-            $resultado = $service->registrarCancha([
+            $resultado = app(CanchaService::class)->registrarCancha([
                 'codigo' => $codigo,
                 'nombre' => $nombre,
                 'tipo' => $tipo,
-                'estado' => $estado
+                'estado' => $estado,
             ]);
 
-            return respuestaSoap([
-                'exito' => true,
-                'datos' => $resultado
-            ]);
-
-        } catch (Throwable $e) {
-
-            return respuestaSoap([
-                'exito' => false,
-                'mensaje' => $e->getMessage()
-            ]);
+            return respuestaSoap(['exito' => true, 'datos' => $resultado]);
+        } catch (Throwable $exception) {
+            return respuestaSoap(['exito' => false, 'mensaje' => $exception->getMessage()]);
         }
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| OPERACIÓN 2: consultarCancha
-|--------------------------------------------------------------------------
-*/
-
-if (!function_exists('consultarCancha')) {
-    function consultarCancha(int $id): string
+if (! function_exists('consultarCancha')) {
+    function consultarCancha(string $token, int $id): string
     {
+        if (validarTokenSoap($token) === false) {
+            return respuestaSoap(['exito' => false, 'mensaje' => 'JWT inválido, vencido o revocado. Operación no autorizada.']);
+        }
+
         try {
+            $cancha = app(CanchaService::class)->consultarCanchaPorId($id);
 
-            $service = app(CanchaService::class);
-
-            $cancha = $service->consultarCanchaPorId($id);
-
-            return respuestaSoap([
-                'exito' => true,
-                'datos' => $cancha
-            ]);
-
-        } catch (Throwable $e) {
-
-            return respuestaSoap([
-                'exito' => false,
-                'mensaje' => $e->getMessage()
-            ]);
+            return respuestaSoap(['exito' => true, 'datos' => $cancha]);
+        } catch (Throwable $exception) {
+            return respuestaSoap(['exito' => false, 'mensaje' => $exception->getMessage()]);
         }
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| OPERACIÓN 3: listarCanchas
-|--------------------------------------------------------------------------
-*/
-
-if (!function_exists('listarCanchas')) {
-    function listarCanchas(): string
+if (! function_exists('listarCanchas')) {
+    function listarCanchas(string $token): string
     {
+        if (validarTokenSoap($token) === false) {
+            return respuestaSoap(['exito' => false, 'mensaje' => 'JWT inválido, vencido o revocado. Operación no autorizada.']);
+        }
+
         try {
-
-            $service = app(CanchaService::class);
-
-            $resultado = $service->listarCanchas();
-
-            return respuestaSoap([
-                'exito' => true,
-                'datos' => $resultado
-            ]);
-
-        } catch (Throwable $e) {
-
-            return respuestaSoap([
-                'exito' => false,
-                'mensaje' => $e->getMessage()
-            ]);
+            return respuestaSoap(['exito' => true, 'datos' => app(CanchaService::class)->listarCanchas()]);
+        } catch (Throwable $exception) {
+            return respuestaSoap(['exito' => false, 'mensaje' => $exception->getMessage()]);
         }
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| OPERACIÓN 4: actualizarCancha
-|--------------------------------------------------------------------------
-*/
-
-if (!function_exists('actualizarCancha')) {
-    function actualizarCancha(
-        int $id,
-        string $nombre,
-        string $tipo,
-        string $estado
-    ): string {
+if (! function_exists('actualizarCancha')) {
+    function actualizarCancha(string $token, int $id, string $nombre, string $tipo, string $estado): string
+    {
+        if (validarTokenSoap($token) === false) {
+            return respuestaSoap(['exito' => false, 'mensaje' => 'JWT inválido, vencido o revocado. Operación no autorizada.']);
+        }
 
         try {
-
-            $service = app(CanchaService::class);
-
-            $resultado = $service->actualizarCanchaPorId(
-                $id,
-                [
-                    'nombre' => $nombre,
-                    'tipo' => $tipo,
-                    'estado' => $estado
-                ]
-            );
-
-            return respuestaSoap([
-                'exito' => true,
-                'datos' => $resultado
+            $resultado = app(CanchaService::class)->actualizarCanchaPorId($id, [
+                'nombre' => $nombre,
+                'tipo' => $tipo,
+                'estado' => $estado,
             ]);
 
-        } catch (Throwable $e) {
-
-            return respuestaSoap([
-                'exito' => false,
-                'mensaje' => $e->getMessage()
-            ]);
+            return respuestaSoap(['exito' => true, 'datos' => $resultado]);
+        } catch (Throwable $exception) {
+            return respuestaSoap(['exito' => false, 'mensaje' => $exception->getMessage()]);
         }
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| OPERACIÓN 5: registrarReserva
-|--------------------------------------------------------------------------
-*/
-
-if (!function_exists('registrarReserva')) {
-    function registrarReserva(
-        int $canchaId,
-        int $usuarioId,
-        string $fecha,
-        string $hora,
-        string $estado
-    ): string {
+if (! function_exists('registrarReserva')) {
+    function registrarReserva(string $token, int $canchaId, int $usuarioId, string $fecha, string $hora, string $estado): string
+    {
+        if (validarTokenSoap($token) === false) {
+            return respuestaSoap(['exito' => false, 'mensaje' => 'JWT inválido, vencido o revocado. Operación no autorizada.']);
+        }
 
         try {
-
-            $service = app(ReservaService::class);
-
-            $resultado = $service->registrarReserva([
+            $resultado = app(ReservaService::class)->registrarReserva([
                 'cancha_id' => $canchaId,
                 'usuario_id' => $usuarioId,
                 'fecha' => $fecha,
                 'hora' => $hora,
-                'estado' => $estado
+                'estado' => $estado,
             ]);
 
-            return respuestaSoap([
-                'exito' => true,
-                'datos' => $resultado
-            ]);
-
-        } catch (Throwable $e) {
-
-            return respuestaSoap([
-                'exito' => false,
-                'mensaje' => $e->getMessage()
-            ]);
+            return respuestaSoap(['exito' => true, 'datos' => $resultado]);
+        } catch (Throwable $exception) {
+            return respuestaSoap(['exito' => false, 'mensaje' => $exception->getMessage()]);
         }
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| OPERACIÓN 6: consultarReservas
-|--------------------------------------------------------------------------
-*/
-
-if (!function_exists('consultarReservas')) {
-    function consultarReservas(): string
+if (! function_exists('consultarReservas')) {
+    function consultarReservas(string $token): string
     {
+        if (! app(SoapReservationAuthorizationService::class)->mayConsult($token)) {
+            return respuestaSoap(['exito' => false, 'mensaje' => 'Token JWT no autorizado para consultar reservas.']);
+        }
+
         try {
-
-            $service = app(ReservaService::class);
-
-            $resultado = $service->listarReservas();
-
-            return respuestaSoap([
-                'exito' => true,
-                'datos' => $resultado
-            ]);
-
-        } catch (Throwable $e) {
-
-            return respuestaSoap([
-                'exito' => false,
-                'mensaje' => $e->getMessage()
-            ]);
+            return respuestaSoap(['exito' => true, 'datos' => app(ReservaService::class)->listarReservas()]);
+        } catch (Throwable $exception) {
+            return respuestaSoap(['exito' => false, 'mensaje' => $exception->getMessage()]);
         }
     }
 }

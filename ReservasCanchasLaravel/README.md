@@ -1,58 +1,310 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ReservasCanchasLaravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicación Laravel para administrar canchas y reservas mediante un servicio SOAP. Incluye registro e inicio de sesión, tokens JWT HS256 y protección de las operaciones SOAP mediante JWT y WS-Security UsernameToken.
 
-## About Laravel
+## Tecnologías
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3 y Laravel 13.
+- MySQL 8 o compatible.
+- NuSOAP para publicar el servicio existente.
+- `firebase/php-jwt` para emitir y verificar JWT con HS256.
+- Extensión SOAP de PHP (`SoapClient`) para que Laravel invoque el servicio.
+- SoapUI 5.10 para pruebas manuales.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Laragon con PHP 8.3, Apache y MySQL.
+- Composer 2.
+- Extensiones PHP `pdo_mysql`, `soap`, `dom`, `mbstring` y `openssl` habilitadas.
+- SoapUI 5.10, opcional para las pruebas manuales.
 
-## Learning Laravel
+En Laragon, abre **PHP > Extensions** y habilita `soap` y `pdo_mysql`. Comprueba la configuración con `php -m` y confirma que también esté habilitada para Apache.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Instalación en Laragon
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Descarga o clona el repositorio en `C:\laragon\www\ReservasCanchasLaravel`.
+2. Abre una terminal en la carpeta del proyecto e instala las dependencias:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+   ```bash
+   composer install
+   ```
 
-## Agentic Development
+3. Crea la configuración local y la clave de Laravel:
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+   ```powershell
+   Copy-Item .env.example .env
+   php artisan key:generate
+   ```
 
-```bash
-composer require laravel/boost --dev
+4. Configura en `.env` la conexión MySQL (host, puerto, nombre de la base de datos, usuario y contraseña). La base `reservascanchas` debe existir y contener previamente las tablas heredadas `canchas`, `usuarios` y `reservas`, con sus relaciones y tipos de claves compatibles. En particular, `reservas.cancha_id` debe referenciar `canchas.id`, `reservas.usuario_id` debe referenciar `usuarios.id` y `reservas.id` debe ser compatible con la clave foránea que agregará Cobros. Las migraciones del proyecto no crean ni reemplazan estas tablas heredadas.
+5. Una vez configurados `.env` y la estructura heredada, ejecuta las migraciones Laravel:
 
-php artisan boost:install
+   ```bash
+   php artisan migrate
+   ```
+
+   Las migraciones aplican los cambios pendientes del proyecto, incluido agregar `role` a `users` y crear las tablas `cobros`, `implementos` y `movimientos_inventario`. La tabla heredada `reservas` debe existir antes de aplicar la migración de cobros; se agrega su clave foránea sin modificar esa tabla.
+
+   Antes de aplicar migraciones a una base existente, realiza un respaldo y ejecuta únicamente `php artisan migrate`. No ejecutes `php artisan migrate:fresh`.
+
+## Variables de entorno
+
+`.env` contiene la configuración privada local y no se incluye en Git ni en el ZIP. No reutilices `APP_KEY` como secreto JWT.
+
+Genera un secreto JWT independiente de 32 bytes o más:
+
+```powershell
+php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Copia el resultado en `JWT_SECRET` dentro de `.env`. Configura además:
 
-## Contributing
+```dotenv
+JWT_ALGORITHM=HS256
+JWT_TTL=60
+JWT_ISSUER=http://127.0.0.1:8000
+SOAP_ENDPOINT=http://127.0.0.1:8000/soap
+SOAP_SECURITY_USERNAME=soap-client
+SOAP_SECURITY_PASSWORD=PEGA_UNA_CLAVE_LOCAL_ALEATORIA
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Genera también una contraseña aleatoria para `SOAP_SECURITY_PASSWORD`; usa los mismos valores de Username y PasswordText en SoapUI. Mantén `JWT_SECRET` y `SOAP_SECURITY_PASSWORD` fuera del repositorio, capturas y entregas públicas. Si cambias variables después de cachear la configuración, ejecuta `php artisan config:clear`.
 
-## Code of Conduct
+## Iniciar la aplicación
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Con Apache de Laragon activo, configura el sitio para servir la carpeta `public` y usa la URL local indicada en `APP_URL`. También puedes iniciar Laravel para pruebas normales con:
 
-## Security Vulnerabilities
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+La pantalla de inicio y registro están en `/login` y `/register`. Para probar la invocación de Laravel hacia su propio endpoint SOAP desde el navegador, usa Apache de Laragon; el servidor PHP integrado es de un solo proceso en Windows y no atiende de forma concurrente esa llamada de retorno.
 
-## License
+## Registro e inicio de sesión
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+El formulario web solicita nombre, correo, contraseña y confirmación. La contraseña requiere al menos 12 caracteres, mayúscula, minúscula, número y símbolo; Laravel la guarda con hashing. Se reutiliza el modelo y la tabla `users` existentes.
+
+También están disponibles estos endpoints JSON:
+
+### Registrar
+
+`POST /api/register`
+
+```json
+{
+  "name": "Usuario de prueba",
+  "email": "prueba@example.com",
+  "password": "EjemploSeguro123!",
+  "password_confirmation": "EjemploSeguro123!"
+}
+```
+
+### Iniciar sesión
+
+`POST /api/login`
+
+```json
+{
+  "email": "prueba@example.com",
+  "password": "EjemploSeguro123!"
+}
+```
+
+La respuesta válida incluye `access_token`, `token_type: Bearer` y `expires_in`. Las credenciales incorrectas no generan token. En el formulario web, el JWT queda guardado del lado del servidor en la sesión y no se imprime en la página.
+
+Ejemplo de respuesta de registro:
+
+```json
+{
+  "exito": true,
+  "mensaje": "Usuario registrado correctamente. Ya puedes iniciar sesión.",
+  "usuario": { "id": 1, "name": "Usuario de prueba", "email": "prueba@example.com" }
+}
+```
+
+Ejemplo ilustrativo de inicio de sesión; el valor del token es un marcador y no sirve para autenticarse:
+
+```json
+{
+  "exito": true,
+  "token_type": "Bearer",
+  "access_token": "TOKEN_GENERADO_POR_EL_LOGIN",
+  "expires_in": 3600,
+  "usuario": { "id": 1, "name": "Usuario de prueba", "email": "prueba@example.com" }
+}
+```
+
+Si la contraseña no coincide, `/api/login` devuelve HTTP 422 sin `access_token`.
+
+`GET /api/me` acepta el token en `Authorization: Bearer <token>`. `POST /api/logout` revoca el token actual hasta su expiración. La revocación usa la caché configurada por Laravel; ejecuta las migraciones para disponer de la tabla `cache` si usas `CACHE_STORE=database`.
+
+## Cobros
+
+Todas las rutas requieren `Authorization: Bearer <JWT>` además del permiso indicado. Los roles se leen de `users.role`; `users` no es la tabla de usuarios de reserva `usuarios`.
+
+| Método y ruta | Nombre | Roles |
+| --- | --- | --- |
+| `POST /api/cobros` | `api.cobros.generar` | administrador, recepcionista |
+| `GET /api/cobros/{cobro}` | `api.cobros.consultar` | administrador, recepcionista, cajero |
+| `PATCH /api/cobros/{cobro}/estado` | `api.cobros.actualizarEstado` | administrador, cajero |
+
+Crear un cobro requiere una reserva existente y un monto positivo. El estado y la moneda los asigna el servidor (`pendiente`, `COP`); la reserva no puede tener otro cobro. El endpoint no filtra por estado de reserva mientras siga pendiente acordar cuáles estados son elegibles.
+
+```http
+POST /api/cobros
+Authorization: Bearer <JWT>
+Content-Type: application/json
+
+{"reserva_id": 123, "monto": "45000.00"}
+```
+
+Marcar pagado registra método (`efectivo`, `transferencia` o `tarjeta`) y fecha del servidor:
+
+```http
+PATCH /api/cobros/1/estado
+Authorization: Bearer <JWT>
+Content-Type: application/json
+
+{"estado": "pagado", "metodo_pago": "transferencia", "referencia_transaccion": "REF-001"}
+```
+
+Solo administrador puede anular, y el servicio vuelve a comprobar ese rol. Solo se aceptan cambios desde `pendiente`; no hay flujo para pagos parciales, devoluciones ni endpoint para modificar monto. La inmutabilidad funcional del monto sigue pendiente de confirmación. Las respuestas JSON actuales usan `exito`, `mensaje` y/o `datos`; el contrato definitivo y los códigos de éxito siguen pendientes de confirmación.
+
+Al consultar, la API invoca el SOAP interno con UsernameToken y devuelve solo la reserva vinculada al cobro. Si SOAP falla o no entrega esa reserva, el endpoint devuelve un error controlado HTTP 502. Para cajero, Laravel emite y consume internamente la capability de 30 segundos; nunca se envía esa credencial en la respuesta REST.
+
+## Implementos e inventario
+
+| Método y ruta | Nombre | Roles |
+| --- | --- | --- |
+| `GET /api/implementos` | `api.implementos.listar` | administrador, recepcionista, encargado de inventario |
+| `POST /api/implementos` | `api.implementos.registrar` | administrador, encargado de inventario |
+| `POST /api/implementos/{implemento}/ajustar-stock` | `api.implementos.ajustarStock` | administrador, encargado de inventario |
+
+Ejemplo de registro:
+
+```http
+POST /api/implementos
+Authorization: Bearer <JWT>
+Content-Type: application/json
+
+{"codigo": "BAL-01", "nombre": "Balón", "categoria": "deportes", "cantidad_disponible": 4}
+```
+
+El estado se permite como `activo`, `mantenimiento` o `retirado`; si se omite, comienza como `activo`. Una cantidad cero es válida y no cambia automáticamente el estado. Los códigos duplicados se rechazan y no modifican existencias.
+
+Ejemplo de entrada o salida:
+
+```http
+POST /api/implementos/1/ajustar-stock
+Authorization: Bearer <JWT>
+Content-Type: application/json
+
+{"tipo_movimiento": "salida", "cantidad": 1, "motivo": "Daño reportado"}
+```
+
+La cantidad debe ser un entero positivo. El servicio bloquea la fila del implemento dentro de una transacción y registra en `movimientos_inventario` el actor, fecha y cantidades anterior y posterior. Actualmente no se bloquean ajustes por estado del implemento; esa regla sigue pendiente. No hay rutas para editar o borrar movimientos.
+
+## Pruebas automatizadas
+
+Ejecuta la suite con:
+
+```bash
+php artisan test --compact
+```
+
+Las pruebas usan SQLite `:memory:` y preparan sus esquemas aislados sin ejecutar `migrate:fresh`. Cubren permisos, validación, unicidad, transiciones, flujo de capability desde la ruta de consulta, filtrado de reserva, auditoría y rollback del ajuste si falla la creación del movimiento. SQLite no permite verificar la concurrencia real de `lockForUpdate()`; esa comprobación queda para una ejecución de integración contra MySQL/InnoDB.
+
+## Verificación manual SOAP para cobros
+
+- Para administrador y recepcionista, SoapUI puede invocar `consultarReservas` con su JWT normal y el encabezado WS-Security UsernameToken configurado en la sección de SoapUI.
+- Para cajero, usa `GET /api/cobros/{cobro}` con su JWT normal. Laravel genera la capability únicamente dentro de `api.cobros.consultar`, llama SOAP con UsernameToken y filtra por la reserva del cobro.
+- No existe endpoint público para emitir capabilities. El JWT normal de cajero enviado directamente a SOAP debe ser rechazado; no copies ni expongas capabilities en SoapUI, registros o respuestas REST.
+- La prueba de punta a punta necesita el WSDL y las credenciales SOAP de `.env` configurados, además de un servidor capaz de atender la llamada SOAP interna mientras procesa la petición REST. Las pruebas automatizadas mockean la conexión saliente de cobros y conservan las pruebas existentes de WS-Security y SOAP.
+
+No se necesitan nuevas variables de entorno para Cobros e Implementos. Se reutilizan `JWT_SECRET`, `SOAP_ENDPOINT`, `SOAP_SECURITY_USERNAME` y `SOAP_SECURITY_PASSWORD`; configura valores locales y no los publiques.
+
+## Servicio SOAP
+
+- Endpoint: `http://127.0.0.1:8000/soap`
+- WSDL: `http://127.0.0.1:8000/soap?wsdl`
+
+La consulta GET del WSDL es pública. Todas las solicitudes SOAP POST requieren WS-Security UsernameToken con `PasswordText`. Las operaciones de negocio también requieren un JWT válido como primer parámetro. La operación `ValidateTokenService` requiere WS-Security y valida el JWT que recibe.
+
+Operaciones del WSDL:
+
+| Operación | Parámetros SOAP (JWT primero en operaciones de negocio) |
+| --- | --- |
+| `ValidateTokenService` | `token` |
+| `registrarCancha` | `token`, `codigo`, `nombre`, `tipo`, `estado` |
+| `consultarCancha` | `token`, `id` |
+| `listarCanchas` | `token` |
+| `actualizarCancha` | `token`, `id`, `nombre`, `tipo`, `estado` |
+| `registrarReserva` | `token`, `canchaId`, `usuarioId`, `fecha`, `hora`, `estado` |
+| `consultarReservas` | `token` |
+
+La firma HS256 se comprueba con la clave original compartida. Se verifican formato, algoritmo, firma, `iss`, `sub`, `iat`, `exp` y `jti`; los tokens revocados se rechazan. No se requiere generar un segundo token para comparar firmas.
+
+Ejemplo de cuerpo SOAP para validar un token. Sustituye los valores entre corchetes por credenciales locales y el JWT obtenido al iniciar sesión:
+
+```xml
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:urn="urn:ReservasCanchas"
+                  xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+  <soapenv:Header>
+    <wsse:Security>
+      <wsse:UsernameToken>
+        <wsse:Username>[SOAP_SECURITY_USERNAME]</wsse:Username>
+        <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">[SOAP_SECURITY_PASSWORD]</wsse:Password>
+      </wsse:UsernameToken>
+    </wsse:Security>
+  </soapenv:Header>
+  <soapenv:Body>
+    <urn:ValidateTokenService><token>[JWT_LOCAL]</token></urn:ValidateTokenService>
+  </soapenv:Body>
+</soapenv:Envelope>
+```
+
+La respuesta SOAP contiene JSON serializado. Para un token válido, `return` incluye `exito: true`; para uno inválido o vencido, incluye `exito: false`.
+
+El código conserva las reglas de negocio: código de cancha único, reserva única por cancha/fecha/hora, cancha activa y usuario existente. La base de datos refuerza las restricciones de unicidad.
+
+## Validar el JWT de Laravel hacia SOAP
+
+El formulario `/dashboard` tiene un botón **Validar mi sesión con SOAP**. También puedes llamar `POST /api/soap/validate-token` con el JWT en el encabezado `Authorization: Bearer ...`. Laravel utiliza `SoapClient` de PHP y añade WS-Security con credenciales de `.env`; el token no se registra ni se devuelve al cliente SOAP.
+
+La extensión `soap` debe estar habilitada tanto en CLI como en Apache. Si la llamada Laravel-a-SOAP falla, revisa `SOAP_ENDPOINT`, las credenciales WS-Security y que Apache pueda atender solicitudes concurrentes.
+
+## Pruebas con SoapUI 5.10
+
+Abre `soapui/ReservasCanchasLaravel-soapui-project.xml`. El proyecto conserva las operaciones de negocio y trae ejemplos de validación para JWT válido, alterado y vencido. Configura localmente las propiedades del proyecto:
+
+- `soapUsername`: el valor de `SOAP_SECURITY_USERNAME`.
+- `soapPassword`: el valor de `SOAP_SECURITY_PASSWORD`.
+- `jwtValid`: pega `access_token` de una respuesta exitosa de `/api/login`.
+- `jwtAltered`: copia el JWT válido y cambia un carácter de la firma.
+- `jwtExpired`: genera un JWT vencido localmente con la clave de `.env`:
+
+  ```powershell
+  php artisan tinker --execute '$claims = ["iss" => config("jwt.issuer"), "sub" => "1", "iat" => time() - 120, "nbf" => time() - 120, "exp" => time() - 1, "jti" => (string) Illuminate\Support\Str::uuid()]; echo Firebase\JWT\JWT::encode($claims, config("jwt.secret"), "HS256");'
+  ```
+
+No guardes esos valores en el XML del proyecto ni los subas a GitHub. Las operaciones de canchas y reservas usan `jwtValid`; los requests incluyen el encabezado WS-Security de ejemplo.
+
+## Estructura
+
+- `app/Http/Controllers`: controladores web, autenticación y SOAP.
+- `app/Services`: reglas de cancha/reserva, servicio JWT y conexión SOAP.
+- `app/Repositories`: acceso a las entidades de negocio existentes.
+- `app/Soap/SoapFunctions.php`: operaciones registradas en NuSOAP.
+- `database/migrations`: esquema Laravel para cuentas y servicios del framework.
+- `resources/views/auth`: formularios de registro/inicio y panel de sesión.
+- `soapui`: proyecto y guía de pruebas SoapUI.
+
+## Seguridad y entrega
+
+- Nunca incluyas `.env`, `vendor`, `node_modules`, tokens reales ni credenciales en Git o en una entrega.
+- El JWT usa una clave propia `JWT_SECRET`; `APP_KEY` se mantiene separada.
+- Los endpoints de autenticación tienen límite de intentos.
+- En producción, sirve SOAP por HTTPS: `PasswordText` y tokens Bearer no deben viajar por HTTP público.
+- El SQL de muestra contiene instrucciones `DROP TABLE`. Haz respaldo y úsalo únicamente en una base desechable o recién creada.
+- Para preparar una entrega sin secretos, instala dependencias después de descargar el ZIP y configura `.env` localmente.

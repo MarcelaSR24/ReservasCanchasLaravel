@@ -1,0 +1,346 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="369e7799-2d6e-4213-b08f-2604e4d700c9" activeEnvironment="Default" name="ReservasCanchasLaravel" soapui-version="5.10.0" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings />
+  <con:interface xsi:type="con:WsdlInterface" id="d077218f-8a20-44f9-a503-aa29c2c63e7a" wsaVersion="NONE" name="ReservasCanchasBinding" type="wsdl" bindingName="{urn:ReservasCanchas}ReservasCanchasBinding" soapVersion="1_1" anonymous="optional" definition="http://127.0.0.1:8000/soap?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings />
+    <con:definitionCache type="TEXT" rootPart="http://127.0.0.1:8000/soap?wsdl">
+      <con:part>
+        <con:url>http://127.0.0.1:8000/soap?wsdl</con:url>
+        <con:content><![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
+<definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:ReservasCanchas" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:ReservasCanchas">
+<types>
+<xsd:schema targetNamespace="urn:ReservasCanchas"
+>
+ <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+ <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
+</xsd:schema>
+</types>
+<message name="ValidateTokenService">
+  <part name="token" type="xsd:string" /></message>
+<message name="ValidateTokenServiceResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="registrarCancha">
+  <part name="token" type="xsd:string" />
+  <part name="codigo" type="xsd:string" />
+  <part name="nombre" type="xsd:string" />
+  <part name="tipo" type="xsd:string" />
+  <part name="estado" type="xsd:string" /></message>
+<message name="registrarCanchaResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="consultarCancha">
+  <part name="token" type="xsd:string" />
+  <part name="id" type="xsd:int" /></message>
+<message name="consultarCanchaResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="listarCanchas">
+  <part name="token" type="xsd:string" /></message>
+<message name="listarCanchasResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="actualizarCancha">
+  <part name="token" type="xsd:string" />
+  <part name="id" type="xsd:int" />
+  <part name="nombre" type="xsd:string" />
+  <part name="tipo" type="xsd:string" />
+  <part name="estado" type="xsd:string" /></message>
+<message name="actualizarCanchaResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="registrarReserva">
+  <part name="token" type="xsd:string" />
+  <part name="canchaId" type="xsd:int" />
+  <part name="usuarioId" type="xsd:int" />
+  <part name="fecha" type="xsd:string" />
+  <part name="hora" type="xsd:string" />
+  <part name="estado" type="xsd:string" /></message>
+<message name="registrarReservaResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="consultarReservas">
+  <part name="token" type="xsd:string" /></message>
+<message name="consultarReservasResponse">
+  <part name="return" type="xsd:string" /></message>
+<portType name="ReservasCanchasPortType">
+  <operation name="ValidateTokenService">
+    <documentation>Valida la firma HS256, emisor, claims y expiración del JWT.</documentation>
+    <input message="tns:ValidateTokenService"/>
+    <output message="tns:ValidateTokenServiceResponse"/>
+  </operation>
+  <operation name="registrarCancha">
+    <documentation>Registra una nueva cancha deportiva.</documentation>
+    <input message="tns:registrarCancha"/>
+    <output message="tns:registrarCanchaResponse"/>
+  </operation>
+  <operation name="consultarCancha">
+    <documentation>Consulta una cancha por su identificador.</documentation>
+    <input message="tns:consultarCancha"/>
+    <output message="tns:consultarCanchaResponse"/>
+  </operation>
+  <operation name="listarCanchas">
+    <documentation>Lista todas las canchas registradas.</documentation>
+    <input message="tns:listarCanchas"/>
+    <output message="tns:listarCanchasResponse"/>
+  </operation>
+  <operation name="actualizarCancha">
+    <documentation>Actualiza los datos de una cancha.</documentation>
+    <input message="tns:actualizarCancha"/>
+    <output message="tns:actualizarCanchaResponse"/>
+  </operation>
+  <operation name="registrarReserva">
+    <documentation>Registra una reserva de cancha.</documentation>
+    <input message="tns:registrarReserva"/>
+    <output message="tns:registrarReservaResponse"/>
+  </operation>
+  <operation name="consultarReservas">
+    <documentation>Consulta todas las reservas registradas.</documentation>
+    <input message="tns:consultarReservas"/>
+    <output message="tns:consultarReservasResponse"/>
+  </operation>
+</portType>
+<binding name="ReservasCanchasBinding" type="tns:ReservasCanchasPortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="ValidateTokenService">
+    <soap:operation soapAction="urn:ReservasCanchas#ValidateTokenService" style="rpc"/>
+    <input><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="registrarCancha">
+    <soap:operation soapAction="urn:ReservasCanchas#registrarCancha" style="rpc"/>
+    <input><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="consultarCancha">
+    <soap:operation soapAction="urn:ReservasCanchas#consultarCancha" style="rpc"/>
+    <input><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="listarCanchas">
+    <soap:operation soapAction="urn:ReservasCanchas#listarCanchas" style="rpc"/>
+    <input><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="actualizarCancha">
+    <soap:operation soapAction="urn:ReservasCanchas#actualizarCancha" style="rpc"/>
+    <input><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="registrarReserva">
+    <soap:operation soapAction="urn:ReservasCanchas#registrarReserva" style="rpc"/>
+    <input><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="consultarReservas">
+    <soap:operation soapAction="urn:ReservasCanchas#consultarReservas" style="rpc"/>
+    <input><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="urn:ReservasCanchas" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+</binding>
+<service name="ReservasCanchas">
+  <port name="ReservasCanchasPort" binding="tns:ReservasCanchasBinding">
+    <soap:address location="http://127.0.0.1:8000/soap"/>
+  </port>
+</service>
+</definitions>]]></con:content>
+        <con:type>http://schemas.xmlsoap.org/wsdl/</con:type>
+      </con:part>
+    </con:definitionCache>
+    <con:endpoints>
+      <con:endpoint>http://127.0.0.1:8000/index.php</con:endpoint>
+    </con:endpoints>
+    <con:operation id="d84f7fe1-758d-421c-8a23-98e56fbe07b1" isOneWay="false" action="urn:ReservasCanchas#actualizarCancha" name="actualizarCancha" bindingOperationName="actualizarCancha" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings />
+      <con:call id="15c91f6f-6a94-43b1-bea4-a9add6027b55" name="Request with JWT and UsernameToken">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://127.0.0.1:8000/soap</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soapenv:Header><wsse:Security><wsse:UsernameToken><wsse:Username>${#Project#soapUsername}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${#Project#soapPassword}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><urn:actualizarCancha><token>${#Project#jwtValid}</token><id>1</id><nombre>Cancha de prueba</nombre><tipo>Fútbol</tipo><estado>ACTIVA</estado></urn:actualizarCancha></soapenv:Body></soapenv:Envelope>]]></con:request>
+        <con:credentials>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+        <con:jmsPropertyConfig />
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#actualizarCancha" />
+        <con:wsrmConfig version="1.2" />
+      </con:call>
+    </con:operation>
+    <con:operation id="06067f8b-9130-4d5d-9652-0ef7a55d0130" isOneWay="false" action="urn:ReservasCanchas#consultarCancha" name="consultarCancha" bindingOperationName="consultarCancha" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings />
+      <con:call id="9813d7fc-bcd2-4cee-ad6f-1c65b6115b62" name="Request with JWT and UsernameToken">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://127.0.0.1:8000/soap</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soapenv:Header><wsse:Security><wsse:UsernameToken><wsse:Username>${#Project#soapUsername}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${#Project#soapPassword}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><urn:consultarCancha><token>${#Project#jwtValid}</token><id>1</id></urn:consultarCancha></soapenv:Body></soapenv:Envelope>]]></con:request>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+        <con:jmsPropertyConfig />
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#consultarCancha" />
+        <con:wsrmConfig version="1.2" />
+      </con:call>
+    </con:operation>
+    <con:operation id="64005663-ee05-4330-b262-76989cf86a46" isOneWay="false" action="urn:ReservasCanchas#consultarReservas" name="consultarReservas" bindingOperationName="consultarReservas" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings />
+      <con:call id="b7432966-2343-4c0d-a703-8bcc221b179b" name="Request with JWT and UsernameToken">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://127.0.0.1:8000/soap</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soapenv:Header><wsse:Security><wsse:UsernameToken><wsse:Username>${#Project#soapUsername}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${#Project#soapPassword}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><urn:consultarReservas><token>${#Project#jwtValid}</token></urn:consultarReservas></soapenv:Body></soapenv:Envelope>]]></con:request>
+        <con:credentials>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+        <con:jmsPropertyConfig />
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#consultarReservas" />
+        <con:wsrmConfig version="1.2" />
+      </con:call>
+    </con:operation>
+    <con:operation id="633afa9f-8334-4061-8b41-f9bb26d12687" isOneWay="false" action="urn:ReservasCanchas#listarCanchas" name="listarCanchas" bindingOperationName="listarCanchas" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings />
+      <con:call id="48477d2b-d42e-431d-a524-390abe51a2ee" name="Request with JWT and UsernameToken">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://127.0.0.1:8000/soap</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soapenv:Header><wsse:Security><wsse:UsernameToken><wsse:Username>${#Project#soapUsername}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${#Project#soapPassword}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><urn:listarCanchas><token>${#Project#jwtValid}</token></urn:listarCanchas></soapenv:Body></soapenv:Envelope>]]></con:request>
+        <con:credentials>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+        <con:jmsPropertyConfig />
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#listarCanchas" />
+        <con:wsrmConfig version="1.2" />
+      </con:call>
+    </con:operation>
+    <con:operation id="41608fd7-0780-424a-9878-9d5d14da9543" isOneWay="false" action="urn:ReservasCanchas#registrarCancha" name="registrarCancha" bindingOperationName="registrarCancha" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings />
+      <con:call id="4140a41d-4072-4f70-b52f-5038ed2d970a" name="Request with JWT and UsernameToken">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://127.0.0.1:8000/soap</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soapenv:Header><wsse:Security><wsse:UsernameToken><wsse:Username>${#Project#soapUsername}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${#Project#soapPassword}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><urn:registrarCancha><token>${#Project#jwtValid}</token><codigo>CAN-SOAP-TEST</codigo><nombre>Cancha de prueba</nombre><tipo>Fútbol</tipo><estado>ACTIVA</estado></urn:registrarCancha></soapenv:Body></soapenv:Envelope>]]></con:request>
+        <con:credentials>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+        <con:jmsPropertyConfig />
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#registrarCancha" />
+        <con:wsrmConfig version="1.2" />
+      </con:call>
+    </con:operation>
+    <con:operation id="d6e18861-0b45-447b-ab8f-70ac72a95bca" isOneWay="false" action="urn:ReservasCanchas#registrarReserva" name="registrarReserva" bindingOperationName="registrarReserva" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings />
+      <con:call id="70bbccc1-5d6a-479c-8a33-0d1474719cb5" name="Request with JWT and UsernameToken">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://127.0.0.1:8000/soap</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soapenv:Header><wsse:Security><wsse:UsernameToken><wsse:Username>${#Project#soapUsername}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${#Project#soapPassword}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><urn:registrarReserva><token>${#Project#jwtValid}</token><canchaId>1</canchaId><usuarioId>1</usuarioId><fecha>2027-02-10</fecha><hora>10:00:00</hora><estado>CONFIRMADA</estado></urn:registrarReserva></soapenv:Body></soapenv:Envelope>]]></con:request>
+        <con:credentials>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+        <con:jmsPropertyConfig />
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#registrarReserva" />
+        <con:wsrmConfig version="1.2" />
+      </con:call>
+    </con:operation>
+    <con:operation id="0225be1b-2ed3-49b4-829f-8b6fdbd3aa51" isOneWay="false" action="urn:ReservasCanchas#ValidateTokenService" name="ValidateTokenService" bindingOperationName="ValidateTokenService" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings />
+      <con:call id="af066461-82c5-4e62-9195-5af641c4fcab" name="JWT válido">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://127.0.0.1:8000/soap</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soapenv:Header><wsse:Security><wsse:UsernameToken><wsse:Username>${#Project#soapUsername}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${#Project#soapPassword}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><urn:ValidateTokenService><token>${#Project#jwtValid}</token></urn:ValidateTokenService></soapenv:Body></soapenv:Envelope>]]></con:request>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+        <con:jmsPropertyConfig />
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#consultarCancha" />
+        <con:wsrmConfig version="1.2" />
+      </con:call>
+      <con:call id="2cfc790a-fd90-4196-b12b-1175d8a25217" name="JWT alterado">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://127.0.0.1:8000/soap</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soapenv:Header><wsse:Security><wsse:UsernameToken><wsse:Username>${#Project#soapUsername}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${#Project#soapPassword}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><urn:ValidateTokenService><token>${#Project#jwtAltered}</token></urn:ValidateTokenService></soapenv:Body></soapenv:Envelope>]]></con:request>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+        <con:jmsPropertyConfig />
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#consultarCancha" />
+        <con:wsrmConfig version="1.2" />
+      </con:call>
+      <con:call id="82a162c0-3c08-4bb9-9e32-bd6c51c25cc9" name="JWT vencido">
+        <con:settings>
+          <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+        </con:settings>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://127.0.0.1:8000/soap</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ReservasCanchas" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><soapenv:Header><wsse:Security><wsse:UsernameToken><wsse:Username>${#Project#soapUsername}</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">${#Project#soapPassword}</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><urn:ValidateTokenService><token>${#Project#jwtExpired}</token></urn:ValidateTokenService></soapenv:Body></soapenv:Envelope>]]></con:request>
+        <con:credentials>
+          <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+          <con:authType>No Authorization</con:authType>
+        </con:credentials>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+        <con:jmsPropertyConfig />
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:ReservasCanchas#consultarCancha" />
+        <con:wsrmConfig version="1.2" />
+      </con:call>
+    </con:operation>
+  </con:interface>
+  <con:properties>
+    <con:property>
+      <con:name>soapUsername</con:name>
+      <con:value>soap-client</con:value>
+    </con:property>
+    <con:property>
+      <con:name>soapPassword</con:name>
+      <con:value>CONFIGURAR_EN_SOAPUI</con:value>
+    </con:property>
+    <con:property>
+      <con:name>jwtValid</con:name>
+      <con:value>PEGAR_JWT_VALIDO</con:value>
+    </con:property>
+    <con:property>
+      <con:name>jwtAltered</con:name>
+      <con:value>PEGAR_JWT_ALTERADO</con:value>
+    </con:property>
+    <con:property>
+      <con:name>jwtExpired</con:name>
+      <con:value>PEGAR_JWT_VENCIDO</con:value>
+    </con:property>
+  </con:properties>
+  <con:wssContainer>
+    <con:outgoing>
+      <con:name>ReservasCanchasSecurity</con:name>
+      <con:username>soap-client</con:username>
+      <con:entry type="Username" username="soap-client" password="">
+        <con:configuration>
+          <addCreated>false</addCreated>
+          <addNonce>false</addNonce>
+          <passwordType>PasswordText</passwordType>
+        </con:configuration>
+      </con:entry>
+    </con:outgoing>
+  </con:wssContainer>
+  <con:oAuth2ProfileContainer />
+  <con:oAuth1ProfileContainer />
+  <con:sensitiveInformation />
+</con:soapui-project>

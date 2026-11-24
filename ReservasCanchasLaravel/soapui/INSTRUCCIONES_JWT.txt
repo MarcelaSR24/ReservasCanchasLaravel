@@ -1,0 +1,17 @@
+CONFIGURACION DEL PROYECTO SOAPUI 5.10
+
+1. Habilita la extension SOAP de PHP y arranca Apache en Laragon.
+2. Verifica el servicio: http://127.0.0.1:8000/soap?wsdl
+3. Abre ReservasCanchasLaravel-soapui-project.xml. El endpoint del proyecto apunta a http://127.0.0.1:8000/soap.
+4. En Custom Properties del proyecto configura:
+   - soapUsername: valor local de SOAP_SECURITY_USERNAME.
+   - soapPassword: valor local de SOAP_SECURITY_PASSWORD.
+   - jwtValid: access_token devuelto por POST /api/login.
+   - jwtAltered: copia jwtValid y cambia un caracter de la firma (tercera seccion).
+   - jwtExpired: genera un token vencido con el comando documentado en README.md.
+5. Ejecuta las solicitudes bajo ValidateTokenService: JWT valido, JWT alterado y JWT vencido.
+6. Para las operaciones de negocio, usa jwtValid. Cada solicitud ya contiene WS-Security UsernameToken con propiedades del proyecto.
+
+El XML solo contiene valores de ejemplo y marcadores. No guardes contrasenas, JWT ni JWT_SECRET en el proyecto SoapUI o en Git.
+
+Todas las solicitudes SOAP POST requieren UsernameToken PasswordText. Las seis operaciones de negocio requieren adicionalmente un JWT valido. El WSDL GET es publico.

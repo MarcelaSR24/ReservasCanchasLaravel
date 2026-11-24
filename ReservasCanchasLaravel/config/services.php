@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'soap' => [
+        'endpoint' => env('SOAP_ENDPOINT', rtrim(env('APP_URL', 'http://127.0.0.1:8000'), '/').'/soap'),
+        'security_username' => env('SOAP_SECURITY_USERNAME'),
+        'security_password' => env('SOAP_SECURITY_PASSWORD'),
+    ],
+
 ];

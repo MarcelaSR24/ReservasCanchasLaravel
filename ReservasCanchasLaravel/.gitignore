@@ -25,3 +25,12 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Configuraciones auxiliares de herramientas de desarrollo
+/.agents/
+/.claude/
+/.mcp.json
+/boost.json
+
+# SQL local con datos personales y sentencias destructivas
+/database/sql/

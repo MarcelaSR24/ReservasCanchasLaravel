@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Reserva extends Model
 {
@@ -15,6 +16,11 @@ class Reserva extends Model
         'usuario_id',
         'fecha',
         'hora',
-        'estado'
+        'estado',
     ];
+
+    public function cobro(): HasOne
+    {
+        return $this->hasOne(Cobro::class);
+    }
 }

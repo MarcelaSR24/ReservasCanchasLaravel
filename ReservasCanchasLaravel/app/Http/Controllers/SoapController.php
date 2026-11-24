@@ -16,11 +16,7 @@ class SoapController extends Controller
             'Soap/SoapFunctions.php'
         );
 
-        $input = file_get_contents('php://input');
-
-        if ($input === false) {
-            $input = '';
-        }
+        $input = $request->getContent();
 
         /*
         |--------------------------------------------------------------------------
@@ -52,10 +48,22 @@ class SoapController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $server = new \soap_server();
+        $server = new \soap_server;
+
+        $soapEndpoint = (string) config('services.soap.endpoint');
+        if ($soapEndpoint === '') {
+            $soapEndpoint = $request->getSchemeAndHttpHost()
+                .$request->getBaseUrl()
+                .$request->getPathInfo();
+        }
+        $soapEndpoint = preg_replace('/\?wsdl$/i', '', $soapEndpoint) ?? $soapEndpoint;
 
         $server->configureWSDL(
             'ReservasCanchas',
+            'urn:ReservasCanchas',
+            $soapEndpoint,
+            'rpc',
+            'http://schemas.xmlsoap.org/soap/http',
             'urn:ReservasCanchas'
         );
 
@@ -64,6 +72,17 @@ class SoapController extends Controller
 
         $server->soap_defencoding = 'UTF-8';
         $server->xml_encoding = 'UTF-8';
+
+        $server->register(
+            'ValidateTokenService',
+            ['token' => 'xsd:string'],
+            ['return' => 'xsd:string'],
+            'urn:ReservasCanchas',
+            'urn:ReservasCanchas#ValidateTokenService',
+            'rpc',
+            'encoded',
+            'Valida la firma HS256, emisor, claims y expiración del JWT.'
+        );
 
         /*
         |--------------------------------------------------------------------------
@@ -74,10 +93,11 @@ class SoapController extends Controller
         $server->register(
             'registrarCancha',
             [
+                'token' => 'xsd:string',
                 'codigo' => 'xsd:string',
                 'nombre' => 'xsd:string',
                 'tipo' => 'xsd:string',
-                'estado' => 'xsd:string'
+                'estado' => 'xsd:string',
             ],
             ['return' => 'xsd:string'],
             'urn:ReservasCanchas',
@@ -96,7 +116,8 @@ class SoapController extends Controller
         $server->register(
             'consultarCancha',
             [
-                'id' => 'xsd:int'
+                'token' => 'xsd:string',
+                'id' => 'xsd:int',
             ],
             ['return' => 'xsd:string'],
             'urn:ReservasCanchas',
@@ -114,7 +135,7 @@ class SoapController extends Controller
 
         $server->register(
             'listarCanchas',
-            [],
+            ['token' => 'xsd:string'],
             ['return' => 'xsd:string'],
             'urn:ReservasCanchas',
             'urn:ReservasCanchas#listarCanchas',
@@ -132,10 +153,11 @@ class SoapController extends Controller
         $server->register(
             'actualizarCancha',
             [
+                'token' => 'xsd:string',
                 'id' => 'xsd:int',
                 'nombre' => 'xsd:string',
                 'tipo' => 'xsd:string',
-                'estado' => 'xsd:string'
+                'estado' => 'xsd:string',
             ],
             ['return' => 'xsd:string'],
             'urn:ReservasCanchas',
@@ -154,11 +176,12 @@ class SoapController extends Controller
         $server->register(
             'registrarReserva',
             [
+                'token' => 'xsd:string',
                 'canchaId' => 'xsd:int',
                 'usuarioId' => 'xsd:int',
                 'fecha' => 'xsd:string',
                 'hora' => 'xsd:string',
-                'estado' => 'xsd:string'
+                'estado' => 'xsd:string',
             ],
             ['return' => 'xsd:string'],
             'urn:ReservasCanchas',
@@ -176,7 +199,7 @@ class SoapController extends Controller
 
         $server->register(
             'consultarReservas',
-            [],
+            ['token' => 'xsd:string'],
             ['return' => 'xsd:string'],
             'urn:ReservasCanchas',
             'urn:ReservasCanchas#consultarReservas',
@@ -191,11 +214,29 @@ class SoapController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $serverVariables = [];
+        foreach (['REQUEST_METHOD', 'QUERY_STRING', 'HTTP_SOAPACTION', 'CONTENT_TYPE'] as $serverVariable) {
+            $serverVariables[$serverVariable] = $_SERVER[$serverVariable] ?? null;
+        }
+        $_SERVER['REQUEST_METHOD'] = $request->method();
+        $_SERVER['QUERY_STRING'] = (string) $request->getQueryString();
+        $_SERVER['HTTP_SOAPACTION'] = (string) $request->headers->get('SOAPAction', '');
+        $_SERVER['CONTENT_TYPE'] = (string) $request->headers->get('Content-Type', '');
+
         ob_start();
-
-        $server->service($input);
-
-        $response = ob_get_clean();
+        try {
+            $server->service($input);
+            $response = (string) ob_get_contents();
+        } finally {
+            ob_end_clean();
+            foreach ($serverVariables as $serverVariable => $previousValue) {
+                if ($previousValue === null) {
+                    unset($_SERVER[$serverVariable]);
+                } else {
+                    $_SERVER[$serverVariable] = $previousValue;
+                }
+            }
+        }
 
         return response(
             $response,
@@ -205,7 +246,6 @@ class SoapController extends Controller
             'text/xml; charset=UTF-8'
         );
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -221,9 +261,9 @@ class SoapController extends Controller
 
         libxml_use_internal_errors(true);
 
-        $dom = new \DOMDocument();
+        $dom = new \DOMDocument;
 
-        if (!$dom->loadXML($xml, LIBXML_NONET)) {
+        if (! $dom->loadXML($xml, LIBXML_NONET)) {
             return 'El mensaje SOAP no contiene un XML válido.';
         }
 
@@ -275,7 +315,7 @@ class SoapController extends Controller
 
         if (
             $passwordType !== '' &&
-            !str_contains(
+            ! str_contains(
                 $passwordType,
                 'PasswordText'
             )
@@ -287,20 +327,19 @@ class SoapController extends Controller
         | Credenciales configuradas en .env
         */
 
-        $usuarioEsperado = env(
-            'SOAP_SECURITY_USERNAME'
-        );
+        $usuarioEsperado = config('services.soap.security_username');
+        $passwordEsperada = config('services.soap.security_password');
 
-        $passwordEsperada = env(
-            'SOAP_SECURITY_PASSWORD'
-        );
+        if ($usuarioEsperado === null || $usuarioEsperado === '' || $passwordEsperada === null || $passwordEsperada === '') {
+            return 'WS-Security no está configurado en el servidor.';
+        }
 
         /*
         | Validar usuario y contraseña
         */
 
         if (
-            !hash_equals(
+            ! hash_equals(
                 (string) $usuarioEsperado,
                 $username
             )
@@ -309,7 +348,7 @@ class SoapController extends Controller
         }
 
         if (
-            !hash_equals(
+            ! hash_equals(
                 (string) $passwordEsperada,
                 $password
             )
@@ -319,7 +358,6 @@ class SoapController extends Controller
 
         return true;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -336,16 +374,16 @@ class SoapController extends Controller
         );
 
         return '<?xml version="1.0" encoding="UTF-8"?>'
-            . '<SOAP-ENV:Envelope '
-            . 'xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">'
-            . '<SOAP-ENV:Body>'
-            . '<SOAP-ENV:Fault>'
-            . '<faultcode>SOAP-ENV:Client</faultcode>'
-            . '<faultstring>'
-            . $mensaje
-            . '</faultstring>'
-            . '</SOAP-ENV:Fault>'
-            . '</SOAP-ENV:Body>'
-            . '</SOAP-ENV:Envelope>';
+            .'<SOAP-ENV:Envelope '
+            .'xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">'
+            .'<SOAP-ENV:Body>'
+            .'<SOAP-ENV:Fault>'
+            .'<faultcode>SOAP-ENV:Client</faultcode>'
+            .'<faultstring>'
+            .$mensaje
+            .'</faultstring>'
+            .'</SOAP-ENV:Fault>'
+            .'</SOAP-ENV:Body>'
+            .'</SOAP-ENV:Envelope>';
     }
 }
